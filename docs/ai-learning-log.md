@@ -82,3 +82,97 @@ Verification: Ran the test, it passed
 Decision: ACCEPTED — using assertRaises in all my tests
 Related file: tests/test_tickets.py
 What I can now explain: assertRaises checks that an exception is raised, and I can inspect the error message.
+
+---
+
+# AI Learning Log
+
+## Fellow: James
+
+### Interaction #1 — Exception Handling
+
+**Problem:** I wasn't sure how to handle errors gracefully in Python
+
+**My initial understanding:** I thought errors would crash the program
+
+**Prompt to AI:** "Explain try/except/else/finally with a 5-line example. I want to understand when each block runs."
+
+**Useful AI guidance:** 
+- try: code that might fail
+- except: runs if error occurs
+- else: runs if no error
+- finally: always runs
+
+**My experiment:**
+```python
+try:
+    num = int("abc")  # This will fail
+except ValueError:
+    print("That's not a number!")
+else:
+    print("Valid number:", num)
+finally:
+    print("This always runs")
+
+# Output: "That's not a number!" then "This always runs"
+
+Verification: Ran it, got expected output
+Decision: ACCEPTED — using try/except in CLI
+Related file: main.py
+What I can now explain: try/except catches errors so the program doesn't crash.
+
+### Interaction #2 — Git Merge Conflicts
+Problem: I was worried about merge conflicts when merging branches
+My initial understanding: Merge conflicts mean I broke something
+Prompt to AI: "What causes merge conflicts and how do I resolve them?"
+Useful AI guidance:
+
+Conflicts happen when both branches change same lines
+Look for <<<<<<< ======= >>>>>>> markers
+Choose correct version, remove markers
+
+My experiment:
+# Created two branches, changed same line in both
+# Got conflict markers:
+<<<<<<< HEAD
+print("Hello from main")
+=======
+print("Hello from feature")
+>>>>>>> feature
+
+# Resolved by keeping: print("Hello from feature")
+
+Verification: Resolved conflict, code worked
+Decision: ACCEPTED — not scared of conflicts anymore
+Related file: Git workflow
+What I can now explain: Conflicts are normal, just read markers and choose correct code.
+
+### Interaction #3 — List Sorting with Keys
+Problem: I needed to sort tickets by priority then ID
+My initial understanding: I thought sorted() only worked on simple lists
+Prompt to AI: "How do I sort a list of dictionaries by two keys in Python?"
+Useful AI guidance:
+
+Use key parameter with a function
+Return a tuple for multiple sort criteria
+
+My experiment:
+tickets = [
+    {"id": "T002", "priority": "high"},
+    {"id": "T001", "priority": "critical"},
+    {"id": "T003", "priority": "high"}
+]
+
+priority_order = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+
+def sort_key(t):
+    return (priority_order[t["priority"]], int(t["id"][1:]))
+
+sorted_tickets = sorted(tickets, key=sort_key)
+# Result: T001 (critical), T002 (high), T003 (high)
+
+Verification: Ran it, got correct order
+Decision: ACCEPTED — using this for work queue
+Related file: campusflow/reports.py
+What I can now explain: sorted() with key function can sort by multiple criteria using tuples.
+
