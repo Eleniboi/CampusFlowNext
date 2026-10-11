@@ -34,7 +34,8 @@ Verification: Ran code, checked test.json content, it worked!
 Decision: ACCEPTED — I'll use this pattern for tickets.json
 Related file: campusflow/storage.py
 What I can now explain: json.dump() takes Python data and a file, converts to text and saves it. json.load() reverses this.
-Interaction #2 — bool is subclass of int
+
+### Interaction 2 — bool is subclass of int
 Problem: My test for rejecting decimal affected_users was failing
 My initial understanding: isinstance(5.5, int) should be False
 Prompt to AI: "My test test_reject_decimal_affected_users is failing. Here's my code and traceback. What's wrong?"
@@ -52,7 +53,8 @@ Verification: Added or isinstance(affected_users, bool) to validation
 Decision: IMPROVED AI suggestion - added bool check to validation
 Related file: campusflow/tickets.py
 What I can now explain: In Python, bool is a subclass of int, so True == 1 and isinstance(True, int) is True.
-Interaction #3 — unittest assertRaises
+
+### Interaction 3 — unittest assertRaises
 Problem: I wasn't sure how to test that functions raise errors
 My initial understanding: I thought I needed try/except in tests
 Prompt to AI: "How do I test that a function raises ValueError in Python unittest?"
