@@ -13,7 +13,7 @@ def save_tickets(tickets, filename="data/tickets.json"):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     
     with open(filename, "w") as f:
-        json.dump(tickets, f, indent=2).
+        json.dump(tickets, f, indent=2)
 
 
 def load_tickets(filename="data/tickets.json"):
