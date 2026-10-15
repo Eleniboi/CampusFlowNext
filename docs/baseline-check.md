@@ -27,3 +27,7 @@ Ran 24 tests. OK (all passing), before any new changes.
 - The menu has 8 options: no notes, search, or understanding check.
 - The last menu prompt was left blank (Enter with no choice). Its behaviour was not recorded.
 - Option 3 (view) was run before assignment, so it showed "Assigned To: Unassigned".
+
+
+## Audit improvement points
+- needs mentor clarification
