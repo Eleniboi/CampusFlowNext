@@ -41,7 +41,7 @@ def change_status(tickets, ticket_id, new_status):
         "in_progress": ["resolved"],
         "resolved": ["open"]
     }
-    
+
     if new not in valid_transitions.get(current, []):
         raise ValueError(f"Cannot move ticket from '{current}' to '{new}'")
 
