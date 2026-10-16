@@ -176,3 +176,155 @@ Decision: ACCEPTED — using this for work queue
 Related file: campusflow/reports.py
 What I can now explain: sorted() with key function can sort by multiple criteria using tuples.
 
+
+
+
+
+
+
+# CampusFlow Next — AI Learning Log (Engineer A)
+
+**Engineer:** Engineer A (Omafu Samuel Oloche)
+**Branch:** `feat/21-validation-and-notes`
+**Scope:** Validation, ticket creation and IDs, workflow safety, follow-up notes, and JSON persistence.
+
+> **Evidence rule:** Keep this log honest. Record the result you actually observed for each experiment and update the verification lines before submission. Do not claim a test passed unless you ran it.
+
+## Learning Cycle 1 — Required ticket fields and a failing storage test
+
+### Knowledge gap
+I understood that `create_ticket()` builds a ticket and `save_tickets()` writes the collection to JSON, but I did not immediately connect the storage validation error to the exact structure returned by the ticket-creation function.
+
+### Exact question asked
+> “I need a test file for note.py.”
+
+During debugging, I also shared the failing storage-test output: `ValueError: Ticket is missing required fields: notes`.
+
+### Guidance received
+Compare the schema expected by `validate_ticket_collection()` with the dictionary created by `create_ticket()`. My ticket used `"note": []`, while validation required `"notes": []`.
+
+### Small unrelated experiment
+Predict the output before running this example. It demonstrates that dictionary keys must match exactly.
+
+```python
+record = {"note": []}
+print("notes" in record)
+record["notes"] = []
+print("notes" in record)
+```
+
+**Prediction:** __________________________________________  
+**Observed output:** ______________________________________
+
+### Independent verification
+I inspected the ticket dictionary and exception traceback. The traceback pointed to `validate_ticket_collection()`, and the ticket used the singular key `"note"`. The required schema uses the plural key `"notes"`.
+
+**Complete before submission:** Change the key to `"notes"` in `campusflow/tickets.py`, then run:
+
+```bash
+python3 -m unittest tests.test_storage -v
+```
+
+**Actual result:** __________________________________________
+
+### Final decision
+Use `"notes"` as the canonical field name throughout the application and tests. Fix the ticket producer to match the agreed schema rather than weakening validation to accept a typo.
+
+### What I learned
+A test failure is evidence about a specific contract. Reading the traceback and comparing the producer's output with the validator's expected schema is more reliable than removing a validation rule just to make a test pass.
+
+---
+
+## Learning Cycle 2 — Preserving state when an operation is rejected
+
+### Knowledge gap
+I needed to understand how to guarantee that a failed operation does not partially modify a ticket or consume a note ID.
+
+### Exact question asked
+> “How does your code avoid modifying state on a rejected action?”
+
+### Guidance received
+Validate the ticket ID, ticket status, author, and trimmed message before appending a note or advancing the note-ID sequence. Apply the same principle to ticket creation, assignment, and status changes: check the rules first, then mutate state only after validation succeeds.
+
+### Small unrelated experiment
+Predict the output before running this unrelated example about validating a value before modifying a list.
+
+```python
+items = ["pen", "book"]
+candidate = ""
+
+if candidate.strip():
+    items.append(candidate.strip())
+
+print(items)
+```
+
+**Prediction:** __________________________________________  
+**Observed output:** ______________________________________
+
+### Independent verification
+Use a unit test that attempts to add a note with a blank author or invalid message, expects `ValueError`, and then checks that the ticket's notes remain unchanged.
+
+```bash
+python3 -m unittest tests.test_notes -v
+```
+
+**Actual test result and test name:** __________________________________________
+
+### Final decision
+Keep validation before mutation. A rejected operation should leave the ticket collection unchanged, and a rejected note should not consume a note ID. Tests should verify both the exception and the unchanged state.
+
+### What I learned
+Checking only that an exception is raised is not enough. A test should also inspect the state after failure, because code might raise an error after it has already changed data.
+
+---
+
+## Learning Cycle 3 — Evaluating an AI suggestion against the project contract
+
+### Knowledge gap
+I needed to distinguish a quick workaround from a fix that preserves the project's agreed data contract.
+
+### Exact question asked
+> “Why does `test_save_and_load` fail with `Ticket is missing required fields: notes`, and what should I change?”
+
+### AI suggestion considered
+A possible shortcut would be to relax validation so that tickets with `"note"` are accepted. That might hide the immediate error, but it would leave the application with two field names for the same concept.
+
+### Small unrelated experiment
+Predict the output before running this unrelated example.
+
+```python
+data = {"colour": "blue"}
+print(data.get("color"))
+print(data.get("colour"))
+```
+
+**Prediction:** __________________________________________  
+**Observed output:** ______________________________________
+
+### Independent verification
+I compared the project ticket schema with the validation error and ticket dictionary. The schema requires `notes`, while the implementation used `note`. This supports correcting the dictionary key, not weakening the validator.
+
+**Complete before submission:** Confirm the correction with the storage tests and full suite. Record the real output:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+**Actual result:** __________________________________________
+
+### Final decision
+Reject the workaround of accepting inconsistent field names. Use `"notes"` consistently, retain schema validation, and use test results to confirm the correction.
+
+### What I learned
+AI output is a suggestion, not proof. I should compare it with the written requirements, inspect the actual code and traceback, run a small experiment, and test the proposed fix before accepting it.
+
+---
+
+## Engineer A — completion checklist
+
+- [ ] Fill in predictions before running each unrelated experiment.
+- [ ] Record the actual experiment outputs.
+- [ ] Run relevant tests and record the real results.
+- [ ] Add any additional coding/debugging cycle required by the mentor.
+- [ ] Be prepared to explain each decision in your own words.
