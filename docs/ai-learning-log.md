@@ -328,3 +328,42 @@ AI output is a suggestion, not proof. I should compare it with the written requi
 - [ ] Run relevant tests and record the real results.
 - [ ] Add any additional coding/debugging cycle required by the mentor.
 - [ ] Be prepared to explain each decision in your own words.
+
+
+
+## Fellow: Jimmy (Engineer B)
+## Branch: `feat/2-search-and-insights`
+
+
+### Interaction #1: Quiz mistakes and assertRaises
+
+* **Concept gap:** I answered Q3 with "all open records" and thought a filter could match any one condition. Filters combine with AND, so a record has to match every filter supplied. I also answered Q4 with "append anyway" and Q5 with "rename IDs silently." A resolved ticket must reject notes, and duplicate IDs must reject the whole load.
+* **Question asked:** I asked the AI to explain the correct answers after I got three wrong.
+* **AI guidance summary:** The correct answer depends on the rule being tested. Filters use AND, and a rejected action should leave the data unchanged.
+* **Independent check:**
+  * I ran `search_filtered` with text "wifi", category "Network", and status "open" on three tickets. It returned only `T001`, which matches the AND rule.
+  * I ran `add_note` on a resolved ticket. It was rejected with "Notes can only be added to open or in-progress tickets", and the notes list stayed at 0.
+  * Duplicate-ID load: [paste the Test 3 result here before committing]
+* **Decision:** I accepted the correct answers, and I'll keep the AND filter rule and the reject-on-duplicate rule in my code and tests.
+* **Changed in my code:** None in this step. I checked the behaviour with tests.
+* **What I can explain without AI:** Filters combine with AND, so a ticket must match every filter. A resolved ticket can't take notes until it's reopened.
+
+### Interaction #2: Restoring a function after a whole-file replace
+
+* **Concept gap:** I didn't know that replacing a whole file can delete functions that weren't part of the change.
+* **Question asked:** I asked how to restore one function without changing the rest of the file.
+* **AI guidance summary:** Make targeted edits, and use `git show <commit>:<file>` to get the exact original text.
+* **Independent check:** I ran the tests and got 38 passing. I used `git diff -w` to confirm that only `get_report` had changed. Comparing with the original text showed that the only remaining differences in `get_work_queue` are whitespace on blank lines.
+* **Decision:** I restored `get_work_queue` with a targeted edit and kept the new `get_report`.
+* **Changed in my code:** `campusflow/reports.py`, `get_work_queue`, restored to its original logic and comments.
+* **What I can explain without AI:** Before saving a rewritten file, check the diff, so unrelated functions aren't lost.
+
+### Interaction #3: Branch and stash confusion
+
+* **Concept gap:** I didn't understand which branch a commit goes to, or what a stash holds.
+* **Question asked:** I asked how to move uncommitted changes to another branch safely.
+* **AI guidance summary:** Check the branch with `git branch --show-current`, use `git stash` to move uncommitted changes, then switch and pop.
+* **Independent check:** I ran `git status`, `git log`, and `git stash list` to confirm where my changes were. This check showed that I was on `main`, not my feature branch, which I hadn't noticed.
+* **Decision:** I'll check the branch and status before every commit and push.
+* **Changed in my code:** None. This was a process change only.
+* **What I can explain without AI:** Commits go to the branch you're on, so confirm it first.
